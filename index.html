@@ -363,9 +363,13 @@ body {
   opacity: 0.55;
 }
 
+/* A panel id is also the ring's hash, so the browser scrolls here natively on
+   a deep link. Offset by the strip height as well as the nav, otherwise the
+   tabs end up hidden behind the header and the reader cannot see which ring
+   is selected. The value is measured in JS so it tracks the real strip. */
 .tabpanel {
   padding: 30px 0 6px;
-  scroll-margin-top: 96px;
+  scroll-margin-top: var(--panel-scroll-margin, 147px);
 }
 
 .tabpanel[hidden] { display: none; }
@@ -684,17 +688,17 @@ body {
   </nav>
 
   <div class="hero-text">
-    <h1 class="hero-title" data-pretext>Your context belongs to you.</h1>
-    <p class="hero-subtitle" data-pretext>The consent-first company brain. You decide what it knows about you, and you can take it back.</p>
+    <h1 class="hero-title">Your context belongs to you.</h1>
+    <p class="hero-subtitle">The consent-first company brain. You decide what it knows about you, and you can take it back.</p>
   </div>
 </section>
 
 <section class="memo">
   <div class="memo-label fade-in">Vision Memo</div>
 
-  <h2 class="fade-in" data-pretext>A company brain is not search. It is a living model of how a company works, built from the people who do the work.</h2>
+  <h2 class="fade-in">A company brain is not search. It is a living model of how a company works, built from the people who do the work.</h2>
 
-  <p class="fade-in" data-pretext>Except for one thing. None of them answer the question the company actually needs: <strong>who knows what, why they decided it, and whether that decision still holds.</strong> That requires context no document contains. It lives in people.</p>
+  <p class="fade-in">Except for one thing. None of them answer the question the company actually needs: <strong>who knows what, why they decided it, and whether that decision still holds.</strong> That requires context no document contains. It lives in people.</p>
 
   <details class="collapse fade-in" id="the-problem" open>
     <summary>
@@ -702,13 +706,13 @@ body {
       <span class="collapse-icon" aria-hidden="true"></span>
     </summary>
     <div class="collapse-body">
-      <p data-pretext>Every company brain today is built top-down. Connect Slack, index Drive, point a model at the pile, and hope the retrieval is good enough. Glean is worth $7.2B doing exactly this. Microsoft Copilot ships it to 100 million seats.</p>
+      <p>Every company brain today is built top-down. Connect Slack, index Drive, point a model at the pile, and hope the retrieval is good enough. Glean is worth $7.2B doing exactly this. Microsoft Copilot ships it to 100 million seats.</p>
     </div>
   </details>
 
   <div class="memo-divider fade-in"></div>
 
-  <h2 class="fade-in" data-pretext>The architecture is four rings. Each one earns the next.</h2>
+  <h2 class="fade-in">The architecture is four rings. Each one earns the next.</h2>
 
   <p class="memo-hint fade-in">Pick a ring below, or click one in the diagram at the top.</p>
 
@@ -721,34 +725,34 @@ body {
     </div>
 
     <div class="tabpanel" id="digital-twin" role="tabpanel" aria-labelledby="tab-digital-twin" tabindex="0">
-      <h3 data-pretext>Digital Twin</h3>
-      <p data-pretext>At the core, a digital twin of each person. Not a chatbot wearing their face. A structured, permission-scoped model of what they know, what they decided, and why.</p>
+      <h3>Digital Twin</h3>
+      <p>At the core, a digital twin of each person. Not a chatbot wearing their face. A structured, permission-scoped model of what they know, what they decided, and why.</p>
     </div>
 
     <div class="tabpanel" id="personal-brain" role="tabpanel" aria-labelledby="tab-personal-brain" tabindex="0">
-      <h3 data-pretext>Personal Brain</h3>
-      <p data-pretext>The twin sits inside a personal brain, and next to it sits a vault. <strong>1Password for your context.</strong> You hold the keys. You grant scoped, revocable access outward. The company never sees what you did not share.</p>
-      <p data-pretext>It earns its place the moment it starts automating work that needs your context. Not generic AI assistance. Work that only succeeds because the agent knows how <em>you</em> handle things.</p>
+      <h3>Personal Brain</h3>
+      <p>The twin sits inside a personal brain, and next to it sits a vault. <strong>1Password for your context.</strong> You hold the keys. You grant scoped, revocable access outward. The company never sees what you did not share.</p>
+      <p>It earns its place the moment it starts automating work that needs your context. Not generic AI assistance. Work that only succeeds because the agent knows how <em>you</em> handle things.</p>
     </div>
 
     <div class="tabpanel" id="company-brain" role="tabpanel" aria-labelledby="tab-company-brain" tabindex="0">
-      <h3 data-pretext>Company Brain</h3>
-      <p data-pretext>The company brain emerges from below. It is what personal brains add up to, each one contributing what its owner chose to share, with the original citation and the original permission boundary intact. No silent drops. No god-mode retrieval.</p>
+      <h3>Company Brain</h3>
+      <p>The company brain emerges from below. It is what personal brains add up to, each one contributing what its owner chose to share, with the original citation and the original permission boundary intact. No silent drops. No god-mode retrieval.</p>
     </div>
 
     <div class="tabpanel" id="self-learning" role="tabpanel" aria-labelledby="tab-self-learning" tabindex="0">
-      <h3 data-pretext>Self-Learning AI</h3>
-      <p data-pretext>The outer ring is what this becomes when the system learns from its own operations. Continual learning, reinforcement from real work, and a world model built from real organizational behavior, not training data.</p>
+      <h3>Self-Learning AI</h3>
+      <p>The outer ring is what this becomes when the system learns from its own operations. Continual learning, reinforcement from real work, and a world model built from real organizational behavior, not training data.</p>
     </div>
   </div>
 
   <div class="memo-divider fade-in"></div>
 
-  <h2 class="fade-in" id="consent" data-pretext>The wedge is consent.</h2>
+  <h2 class="fade-in" id="consent">The wedge is consent.</h2>
 
-  <p class="fade-in" data-pretext>A digital twin is a company brain with a person axis on the index and a persona on the output. Around 80% of the code is identical. The 20% that differs is not architecture. It is consent.</p>
+  <p class="fade-in">A digital twin is a company brain with a person axis on the index and a persona on the output. Around 80% of the code is identical. The 20% that differs is not architecture. It is consent.</p>
 
-  <blockquote class="pullquote fade-in" data-pretext>The brain belongs to the company. The twin belongs to the person.</blockquote>
+  <blockquote class="pullquote fade-in">The brain belongs to the company. The twin belongs to the person.</blockquote>
 
   <details class="collapse fade-in" id="why-incumbents-cannot" open>
     <summary>
@@ -756,8 +760,8 @@ body {
       <span class="collapse-icon" aria-hidden="true"></span>
     </summary>
     <div class="collapse-body">
-      <p data-pretext>Revocation, portability on exit, an audit log the individual owns. Nobody has shipped this as a product primitive. The incumbents cannot, because their entire business model assumes org-level consent granted once by IT. The individual's side of the permission boundary is unclaimed territory.</p>
-      <p data-pretext>We build the brain. We ship the twin as a view of it. And we enter through consent, the one capability a seat-priced, org-indexed incumbent structurally cannot copy.</p>
+      <p>Revocation, portability on exit, an audit log the individual owns. Nobody has shipped this as a product primitive. The incumbents cannot, because their entire business model assumes org-level consent granted once by IT. The individual's side of the permission boundary is unclaimed territory.</p>
+      <p>We build the brain. We ship the twin as a view of it. And we enter through consent, the one capability a seat-priced, org-indexed incumbent structurally cannot copy.</p>
     </div>
   </details>
 </section>
@@ -772,7 +776,7 @@ body {
       <span class="collapse-icon" aria-hidden="true"></span>
     </summary>
     <div class="collapse-body">
-      <p data-pretext>Every answer carries a citation. Every retrieval respects two independent authorities: the org ACL and the individual's grant. Where they conflict, the person wins. One cross-boundary leak ends the company. This is non-negotiable engineering, tested in CI on every build.</p>
+      <p>Every answer carries a citation. Every retrieval respects two independent authorities: the org ACL and the individual's grant. Where they conflict, the person wins. One cross-boundary leak ends the company. This is non-negotiable engineering, tested in CI on every build.</p>
     </div>
   </details>
 
@@ -783,7 +787,7 @@ body {
       <span class="collapse-icon" aria-hidden="true"></span>
     </summary>
     <div class="collapse-body">
-      <p data-pretext>Search tools answer "where is the refund policy?" A company brain answers "how do we handle a refund for an enterprise customer past 30 days, who decided that, and is it still true?" Then lets an agent act on the answer. The moat is the "why" layer that no incumbent leads with.</p>
+      <p>Search tools answer "where is the refund policy?" A company brain answers "how do we handle a refund for an enterprise customer past 30 days, who decided that, and is it still true?" Then lets an agent act on the answer. The moat is the "why" layer that no incumbent leads with.</p>
     </div>
   </details>
 
@@ -794,7 +798,7 @@ body {
       <span class="collapse-icon" aria-hidden="true"></span>
     </summary>
     <div class="collapse-body">
-      <p data-pretext>Model-agnostic. Feeds context into Copilot, ChatGPT, Claude, your own agents over MCP. Replaces nothing the company already pays for. Lowers the rip-and-replace objection to near zero.</p>
+      <p>Model-agnostic. Feeds context into Copilot, ChatGPT, Claude, your own agents over MCP. Replaces nothing the company already pays for. Lowers the rip-and-replace objection to near zero.</p>
     </div>
   </details>
 
@@ -805,7 +809,7 @@ body {
       <span class="collapse-icon" aria-hidden="true"></span>
     </summary>
     <div class="collapse-body">
-      <p data-pretext>One wedge. One design partner. One use case where "how + why + execute" is obviously valuable and measurable. Land one mid-market company bottom-up, prove ramp-time and agent-task-success, then widen. Enter on the wedge, not the category.</p>
+      <p>One wedge. One design partner. One use case where "how + why + execute" is obviously valuable and measurable. Land one mid-market company bottom-up, prove ramp-time and agent-task-success, then widen. Enter on the wedge, not the category.</p>
     </div>
   </details>
 </section>
@@ -884,9 +888,23 @@ function activateTabFor(id) {
   return true;
 }
 
+// Keep the panels' scroll offset in step with the actual strip height, which
+// differs between breakpoints. Without this a deep link parks the tab strip
+// underneath the sticky nav.
+function syncPanelScrollMargin() {
+  if (!tablist) return;
+  const navHeight = document.querySelector('.nav').getBoundingClientRect().height;
+  const stripHeight = tablist.getBoundingClientRect().height;
+  document.documentElement.style.setProperty(
+    '--panel-scroll-margin', Math.round(navHeight + stripHeight + 24) + 'px'
+  );
+}
+
 if (tabs.length) {
   document.documentElement.classList.add('js-tabs');
   activateTab(tabs[0]);
+  syncPanelScrollMargin();
+  window.addEventListener('resize', syncPanelScrollMargin);
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
@@ -919,9 +937,10 @@ function revealHashTarget(scrollToIt) {
   let target = document.getElementById(id);
   if (!target) return;
 
-  // A ring id points at a tab panel. Open its tab and aim at the strip, so the
-  // reader sees which ring is selected rather than landing on bare prose.
-  if (activateTabFor(id)) target = document.getElementById('rings') || target;
+  // A ring id points at a tab panel, so open its tab. The panel carries a
+  // scroll margin big enough to keep the strip in view, which means the
+  // browser's own fragment scroll and ours agree on where to land.
+  activateTabFor(id);
 
   // A target inside a minimized block is useless while the block is shut.
   const parentDetails = target.closest('details');
@@ -944,8 +963,8 @@ function revealHashTarget(scrollToIt) {
   const jump = () => target.scrollIntoView({ block: 'start', behavior: 'instant' });
 
   requestAnimationFrame(jump);
-  // Fonts and the pretext pass both resize text after this, which moves the
-  // target, so land it again once everything has settled.
+  // Web fonts swap in after this and reflow the text above the target, so
+  // land it again once everything has settled.
   window.addEventListener('load', () => requestAnimationFrame(jump), { once: true });
 }
 
@@ -988,9 +1007,10 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     if (!target) return;
     event.preventDefault();
 
-    // Clicking a ring in the diagram selects that ring's tab, then scrolls to
-    // the strip so the selection is visible along with the text it revealed.
-    if (activateTabFor(id)) target = document.getElementById('rings') || target;
+    // Clicking a ring in the diagram selects that ring's tab. The panel's
+    // scroll margin keeps the strip visible, so the reader sees the selection
+    // alongside the text it revealed.
+    activateTabFor(id);
 
     const parentDetails = target.closest('details');
     if (parentDetails) parentDetails.open = true;
@@ -1000,36 +1020,6 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     history.replaceState(null, '', '#' + id);
   });
 });
-</script>
-
-<!-- Progressive enhancement only. If this never loads, the page is unaffected. -->
-<script type="module">
-import { prepare, layout } from 'https://esm.sh/@chenglou/pretext';
-
-async function initPretext() {
-  await document.fonts.ready;
-  const elements = document.querySelectorAll('[data-pretext]');
-  const prepared = new Map();
-
-  for (const el of elements) {
-    const text = el.textContent;
-    const font = getComputedStyle(el).font;
-    prepared.set(el, prepare(text, font));
-  }
-
-  function relayout() {
-    for (const [el, handle] of prepared) {
-      const lh = parseFloat(getComputedStyle(el).lineHeight);
-      const { height } = layout(handle, el.clientWidth, lh);
-      el.style.minHeight = `${height}px`;
-    }
-  }
-
-  new ResizeObserver(() => relayout()).observe(document.body);
-  relayout();
-}
-
-initPretext();
 </script>
 </body>
 </html>
