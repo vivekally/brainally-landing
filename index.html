@@ -767,9 +767,35 @@ function revealHashTarget(scrollToIt) {
 revealHashTarget(true);
 window.addEventListener('hashchange', () => revealHashTarget(false));
 
-// Smooth scrolling belongs on clicks, not on the document. Doing it here keeps
-// the animation for in-page navigation while leaving load-time fragment jumps
-// instant, which is what someone arriving on a deep link actually wants.
+// Smooth scrolling belongs on clicks, not on the document. It is animated by
+// hand rather than with behavior:'smooth' because that option is a silent
+// no-op in some engines, which would leave a click doing nothing at all. A
+// rAF tween behaves the same everywhere and always lands on the target.
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+function scrollToSection(target) {
+  const offset = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const start = window.scrollY;
+  const dest = Math.max(0, Math.min(start + target.getBoundingClientRect().top - offset, maxScroll));
+  const distance = dest - start;
+
+  if (reduceMotion.matches || Math.abs(distance) < 2) {
+    window.scrollTo(0, dest);
+    return;
+  }
+
+  const duration = Math.min(700, Math.max(320, Math.abs(distance) * 0.35));
+  const startedAt = performance.now();
+  const ease = p => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+
+  (function step(now) {
+    const p = Math.min(1, (now - startedAt) / duration);
+    window.scrollTo(0, start + distance * ease(p));
+    if (p < 1) requestAnimationFrame(step);
+  })(startedAt);
+}
+
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', event => {
     const id = link.getAttribute('href').slice(1);
@@ -777,7 +803,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     if (!target) return;
     event.preventDefault();
     target.classList.add('visible');
-    target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    scrollToSection(target);
     history.pushState(null, '', '#' + id);
   });
 });
