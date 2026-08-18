@@ -698,10 +698,14 @@ body {
   <div class="footer-right"><a href="mailto:vivek@brainally.io">vivek@brainally.io</a></div>
 </footer>
 
+<!--
+  Core page behaviour is a plain script on purpose. It used to live in the
+  module below, but a module body does not run until every one of its imports
+  has been fetched, so navigation was waiting on a CDN round-trip and the
+  deep-link jump landed after the browser had already settled at the top.
+  Nothing here should break if a third-party CDN is slow or down.
+-->
 <script>
-// Pretext inlined
-</script>
-<script type="module">
 // Scroll fade-in observer
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -759,9 +763,10 @@ function revealHashTarget(scrollToIt) {
 
 revealHashTarget(true);
 window.addEventListener('hashchange', () => revealHashTarget(false));
+</script>
 
-// Pretext layout
-// FALLBACK: vendor/pretext.js missing from inline, using CDN
+<!-- Progressive enhancement only. If this never loads, the page is unaffected. -->
+<script type="module">
 import { prepare, layout } from 'https://esm.sh/@chenglou/pretext';
 
 async function initPretext() {
