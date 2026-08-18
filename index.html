@@ -202,7 +202,7 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Ring labels */
+/* Ring labels double as the page's navigation. */
 .ring-label {
   position: absolute;
   font-size: 11px;
@@ -213,12 +213,29 @@ body {
   white-space: nowrap;
   opacity: 0;
   animation: label-in 1s ease forwards;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 100px;
+  /* Opaque so the ring stroke is knocked out behind the text rather than
+     running through it. Matters most on mobile, where the rings compress. */
+  background: var(--bg);
+  transition: color 0.25s, background-color 0.25s;
 }
 
-.ring-label-4 { top: -4%; left: 50%; transform: translateX(-50%); animation-delay: 0.5s; }
-.ring-label-3 { top: 11%; left: 50%; transform: translateX(-50%); animation-delay: 0.7s; }
-.ring-label-2 { top: 24%; left: 50%; transform: translateX(-50%); animation-delay: 0.9s; }
-.ring-label-1 { top: 36%; left: 50%; transform: translateX(-50%); animation-delay: 1.1s; }
+.ring-label:hover,
+.ring-label:focus-visible {
+  color: var(--fg);
+  background: #1a1a1a;
+  outline: none;
+}
+
+/* Hovering a label brightens the ring it points at. */
+.ring.is-target { stroke-opacity: 0.9 !important; transition: stroke-opacity 0.25s; }
+
+.ring-label-4 { top: -5%; left: 50%; transform: translateX(-50%); animation-delay: 0.5s; }
+.ring-label-3 { top: 10%; left: 50%; transform: translateX(-50%); animation-delay: 0.7s; }
+.ring-label-2 { top: 23%; left: 50%; transform: translateX(-50%); animation-delay: 0.9s; }
+.ring-label-1 { top: 35%; left: 50%; transform: translateX(-50%); animation-delay: 1.1s; }
 
 @keyframes label-in {
   from { opacity: 0; transform: translateX(-50%) translateY(6px); }
@@ -273,18 +290,62 @@ body {
   color: var(--fg);
 }
 
+/* Measure capped near 68 characters. Headings stay full width. */
 .memo p {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 300;
   color: var(--fg-muted);
-  line-height: 1.8;
-  margin-bottom: 24px;
+  line-height: 1.75;
+  margin-bottom: 22px;
+  max-width: 600px;
 }
 
 .memo p strong {
   color: var(--fg);
   font-weight: 500;
 }
+
+/* One ring, one anchored block. Gives the diagram something to point at. */
+.ring-section {
+  scroll-margin-top: 96px;
+  padding: 28px 0 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 28px;
+}
+
+.ring-section:first-of-type { border-top: none; }
+
+.ring-section-index {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 10px;
+}
+
+.ring-section h3 {
+  font-size: 21px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  margin-bottom: 14px;
+}
+
+/* Skim anchors: the three lines that carry the argument on their own. */
+.pullquote {
+  font-size: clamp(19px, 2.6vw, 24px);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  padding-left: 22px;
+  margin: 36px 0;
+  max-width: 620px;
+}
+
+.memo h2, .memo-divider, .memo-rings-inline { scroll-margin-top: 96px; }
 
 .memo-divider {
   width: 40px;
@@ -310,11 +371,33 @@ body {
   padding: 6px 14px;
   border-radius: 100px;
   white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.25s, border-color 0.25s, background-color 0.25s;
 }
 
+.memo-ring-tag:hover,
+.memo-ring-tag:focus-visible {
+  color: var(--fg);
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  outline: none;
+}
+
+/* Filled dot marks a ring that exists today, not just on the roadmap. */
 .memo-ring-tag.active {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: var(--fg);
+}
+
+.memo-ring-tag.active::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--fg);
+  margin-right: 7px;
+  vertical-align: middle;
 }
 
 .memo-ring-arrow {
@@ -444,7 +527,11 @@ body {
   .team { padding: 0 24px 80px; }
   .team-grid { grid-template-columns: 1fr; gap: 8px; }
   .footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
-  .ring-label { font-size: 9px; }
+  /* Taller tap targets. Ring spacing bottoms out at a 36px gap, so 8px of
+     vertical padding is the most these can take without colliding. */
+  .ring-label { font-size: 9px; padding: 8px 12px; }
+  .memo p, .pullquote { max-width: none; }
+  .ring-section { padding-top: 24px; margin-top: 24px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -463,8 +550,8 @@ body {
 </nav>
 
 <section class="hero">
-  <div class="hero-rings" aria-hidden="true">
-    <svg class="rings-svg" viewBox="0 0 400 400">
+  <nav class="hero-rings" aria-label="Architecture">
+    <svg class="rings-svg" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
       <defs>
         <radialGradient id="halo">
           <stop offset="0%" stop-color="#fff" stop-opacity="0.20"/>
@@ -488,11 +575,11 @@ body {
       <circle class="core" cx="200" cy="200" r="3.5"/>
     </svg>
 
-    <div class="ring-label ring-label-4">Self-Learning AI</div>
-    <div class="ring-label ring-label-3">Company Brain</div>
-    <div class="ring-label ring-label-2">Personal Brain</div>
-    <div class="ring-label ring-label-1">Digital Twin</div>
-  </div>
+    <a class="ring-label ring-label-4" href="#self-learning" data-ring="4">Self-Learning AI</a>
+    <a class="ring-label ring-label-3" href="#company-brain" data-ring="3">Company Brain</a>
+    <a class="ring-label ring-label-2" href="#personal-brain" data-ring="2">Personal Brain</a>
+    <a class="ring-label ring-label-1" href="#digital-twin" data-ring="1">Digital Twin</a>
+  </nav>
 
   <div class="hero-text">
     <h1 class="hero-title" data-pretext>Your context belongs to you.</h1>
@@ -514,28 +601,49 @@ body {
   <h2 class="fade-in" data-pretext>The architecture is four rings. Each one earns the next.</h2>
 
   <div class="memo-rings-inline fade-in">
-    <span class="memo-ring-tag active">Digital Twin</span>
+    <a class="memo-ring-tag active" href="#digital-twin">Digital Twin</a>
     <span class="memo-ring-arrow">&rarr;</span>
-    <span class="memo-ring-tag active">Personal Brain</span>
+    <a class="memo-ring-tag active" href="#personal-brain">Personal Brain</a>
     <span class="memo-ring-arrow">&rarr;</span>
-    <span class="memo-ring-tag">Company Brain</span>
+    <a class="memo-ring-tag" href="#company-brain">Company Brain</a>
     <span class="memo-ring-arrow">&rarr;</span>
-    <span class="memo-ring-tag">Self-Learning AI</span>
+    <a class="memo-ring-tag" href="#self-learning">Self-Learning AI</a>
   </div>
 
-  <p class="fade-in" data-pretext>At the core: a <strong>digital twin</strong> of each person, sitting inside their <strong>personal brain</strong>. Not a chatbot wearing their face. A structured, permission-scoped model of what they know, what they decided, and why. Next to it: a vault. <strong>1Password for your context.</strong> You hold the keys. You grant scoped, revocable access outward. The company never sees what you did not share. The personal brain becomes useful when it automates work that requires your context. Not generic AI assistance. Work that only succeeds because the agent knows how <em>you</em> handle things.</p>
+  <div class="ring-section fade-in" id="digital-twin">
+    <div class="ring-section-index">Ring 01</div>
+    <h3 data-pretext>Digital Twin</h3>
+    <p data-pretext>At the core, a digital twin of each person. Not a chatbot wearing their face. A structured, permission-scoped model of what they know, what they decided, and why.</p>
+  </div>
 
-  <p class="fade-in" data-pretext>The company brain is the third ring, and it emerges from below. It is what personal brains add up to, each one contributing what its owner chose to share, with the original citation and the original permission boundary intact. No silent drops. No god-mode retrieval.</p>
+  <div class="ring-section fade-in" id="personal-brain">
+    <div class="ring-section-index">Ring 02</div>
+    <h3 data-pretext>Personal Brain</h3>
+    <p data-pretext>The twin sits inside a personal brain, and next to it sits a vault. <strong>1Password for your context.</strong> You hold the keys. You grant scoped, revocable access outward. The company never sees what you did not share.</p>
+    <p data-pretext>It earns its place the moment it starts automating work that needs your context. Not generic AI assistance. Work that only succeeds because the agent knows how <em>you</em> handle things.</p>
+  </div>
 
-  <p class="fade-in" data-pretext>The outer ring is what this becomes when the system learns from its own operations: <strong>a self-learning AI company</strong>. Continual learning, reinforcement from real work, and a world model built from real organizational behavior, not training data.</p>
+  <div class="ring-section fade-in" id="company-brain">
+    <div class="ring-section-index">Ring 03</div>
+    <h3 data-pretext>Company Brain</h3>
+    <p data-pretext>The company brain emerges from below. It is what personal brains add up to, each one contributing what its owner chose to share, with the original citation and the original permission boundary intact. No silent drops. No god-mode retrieval.</p>
+  </div>
+
+  <div class="ring-section fade-in" id="self-learning">
+    <div class="ring-section-index">Ring 04</div>
+    <h3 data-pretext>Self-Learning AI</h3>
+    <p data-pretext>The outer ring is what this becomes when the system learns from its own operations. Continual learning, reinforcement from real work, and a world model built from real organizational behavior, not training data.</p>
+  </div>
 
   <div class="memo-divider fade-in"></div>
 
-  <h2 class="fade-in" data-pretext>The wedge is consent.</h2>
+  <h2 class="fade-in" id="consent" data-pretext>The wedge is consent.</h2>
 
   <p class="fade-in" data-pretext>A digital twin is a company brain with a person axis on the index and a persona on the output. Around 80% of the code is identical. The 20% that differs is not architecture. It is consent.</p>
 
-  <p class="fade-in" data-pretext><strong>The brain belongs to the company. The twin belongs to the person.</strong> Revocation, portability on exit, an audit log the individual owns. Nobody has shipped this as a product primitive. The incumbents cannot, because their entire business model assumes org-level consent granted once by IT. The individual's side of the permission boundary is unclaimed territory.</p>
+  <blockquote class="pullquote fade-in" data-pretext>The brain belongs to the company. The twin belongs to the person.</blockquote>
+
+  <p class="fade-in" data-pretext>Revocation, portability on exit, an audit log the individual owns. Nobody has shipped this as a product primitive. The incumbents cannot, because their entire business model assumes org-level consent granted once by IT. The individual's side of the permission boundary is unclaimed territory.</p>
 
   <p class="fade-in" data-pretext>We build the brain. We ship the twin as a view of it. And we enter through consent, the one capability a seat-priced, org-indexed incumbent structurally cannot copy.</p>
 </section>
@@ -604,6 +712,38 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+// Ring labels navigate. Hovering one brightens the ring it points at, so the
+// link between the diagram and the section it opens is visible before clicking.
+const ringLabels = document.querySelectorAll('.ring-label[data-ring]');
+
+ringLabels.forEach(label => {
+  const circle = document.querySelector(`.ring-${label.dataset.ring}`);
+  if (!circle) return;
+  const on  = () => circle.classList.add('is-target');
+  const off = () => circle.classList.remove('is-target');
+  label.addEventListener('mouseenter', on);
+  label.addEventListener('mouseleave', off);
+  label.addEventListener('focus', on);
+  label.addEventListener('blur', off);
+});
+
+// A deep link lands mid-page, where the fade-in observer may not have fired yet.
+// Reveal the target and its neighbours up front so the section is never blank.
+function revealHashTarget() {
+  const id = location.hash.slice(1);
+  if (!id) return;
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.classList.add('visible');
+  let prev = target.previousElementSibling;
+  for (let i = 0; i < 2 && prev; i++, prev = prev.previousElementSibling) {
+    prev.classList.add('visible');
+  }
+}
+
+revealHashTarget();
+window.addEventListener('hashchange', revealHashTarget);
 
 // Pretext layout
 // FALLBACK: vendor/pretext.js missing from inline, using CDN
