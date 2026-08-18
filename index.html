@@ -741,9 +741,13 @@ function revealHashTarget(scrollToIt) {
     prev.classList.add('visible');
   }
   // Browsers skip the initial fragment scroll when scroll-behavior is smooth,
-  // which leaves a deep link sitting at the top of the page. Do it ourselves.
+  // which leaves a deep link sitting at the top of the page. Do it ourselves,
+  // instantly: someone opening /#company-brain wants to be there, not to watch
+  // the whole page scroll past. In-page clicks still animate.
   if (scrollToIt) {
-    requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ block: 'start', behavior: 'instant' });
+    });
   }
 }
 
