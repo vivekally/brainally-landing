@@ -740,15 +740,21 @@ function revealHashTarget(scrollToIt) {
   for (let i = 0; i < 2 && prev; i++, prev = prev.previousElementSibling) {
     prev.classList.add('visible');
   }
-  // Browsers skip the initial fragment scroll when scroll-behavior is smooth,
-  // which leaves a deep link sitting at the top of the page. Do it ourselves,
-  // instantly: someone opening /#company-brain wants to be there, not to watch
-  // the whole page scroll past. In-page clicks still animate.
-  if (scrollToIt) {
-    requestAnimationFrame(() => {
-      target.scrollIntoView({ block: 'start', behavior: 'instant' });
-    });
-  }
+  if (!scrollToIt) return;
+
+  // Two things fight a deep link on load. The browser skips its own fragment
+  // scroll when scroll-behavior is smooth, and its automatic scroll
+  // restoration then resets us to the top. Take manual control and jump
+  // ourselves, instantly: someone opening /#company-brain wants to be there,
+  // not to watch the whole page scroll past. In-page clicks still animate.
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  const jump = () => target.scrollIntoView({ block: 'start', behavior: 'instant' });
+
+  requestAnimationFrame(jump);
+  // Fonts and the pretext pass both resize text after this, which moves the
+  // target, so land it again once everything has settled.
+  window.addEventListener('load', () => requestAnimationFrame(jump), { once: true });
 }
 
 revealHashTarget(true);
