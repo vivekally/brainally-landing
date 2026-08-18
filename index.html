@@ -308,32 +308,171 @@ body {
   font-weight: 500;
 }
 
-/* One ring, one anchored block. Gives the diagram something to point at. */
-.ring-section {
-  scroll-margin-top: 96px;
-  padding: 28px 0 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  margin-top: 28px;
+/* TABS — one ring per tab, driven by the diagram above.
+   Panels ship visible and JS hides the inactive ones, so without JS the page
+   is still a complete, readable document. */
+.tabs { margin: 32px 0 8px; scroll-margin-top: 96px; }
+
+.tablist {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  scroll-snap-type: x proximity;
 }
 
-.ring-section:first-of-type { border-top: none; }
+.tablist::-webkit-scrollbar { display: none; }
 
-.ring-section-index {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+.tab {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  margin-bottom: -1px;
   color: var(--fg-dim);
-  font-variant-numeric: tabular-nums;
-  margin-bottom: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 400;
+  padding: 13px 15px;
+  cursor: pointer;
+  white-space: nowrap;
+  scroll-snap-align: start;
+  transition: color 0.2s, border-color 0.2s;
 }
 
-.ring-section h3 {
+.tab:hover { color: var(--fg-muted); }
+
+.tab:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.45);
+  outline-offset: -3px;
+  border-radius: 3px;
+}
+
+.tab[aria-selected="true"] {
+  color: var(--fg);
+  border-bottom-color: var(--fg);
+}
+
+.tab-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  margin-right: 8px;
+  opacity: 0.55;
+}
+
+.tabpanel {
+  padding: 30px 0 6px;
+  scroll-margin-top: 96px;
+}
+
+.tabpanel[hidden] { display: none; }
+
+.js-tabs .tabpanel:not([hidden]) { animation: panel-in 0.32s ease both; }
+
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tabpanel h3 {
   font-size: 21px;
   font-weight: 500;
   letter-spacing: -0.015em;
   color: var(--fg);
   margin-bottom: 14px;
 }
+
+.memo-hint {
+  font-size: 13px;
+  color: var(--fg-dim);
+  margin-bottom: 0;
+}
+
+/* MINIMIZE / MAXIMIZE — native <details> so it works without JS,
+   is keyboard operable, and stays indexable. */
+.collapse {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  scroll-margin-top: 96px;
+}
+
+.collapse > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 22px 0;
+  color: var(--fg-muted);
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: color 0.2s;
+}
+
+.collapse > summary::-webkit-details-marker { display: none; }
+.collapse > summary:hover { color: var(--fg); }
+.collapse[open] > summary { color: var(--fg); }
+
+.collapse > summary:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.45);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+.collapse-num {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+.summary-text { flex: 1; }
+
+/* Plus that becomes a minus when open. */
+.collapse-icon {
+  flex: none;
+  position: relative;
+  width: 14px;
+  height: 14px;
+  align-self: center;
+  opacity: 0.45;
+  transition: opacity 0.2s;
+}
+
+.collapse > summary:hover .collapse-icon { opacity: 0.9; }
+
+.collapse-icon::before,
+.collapse-icon::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.collapse-icon::before {
+  top: 50%; left: 0;
+  width: 100%; height: 1px;
+  transform: translateY(-50%);
+}
+
+.collapse-icon::after {
+  left: 50%; top: 0;
+  width: 1px; height: 100%;
+  transform: translateX(-50%);
+}
+
+.collapse[open] .collapse-icon::after {
+  transform: translateX(-50%) rotate(90deg);
+  opacity: 0;
+}
+
+.collapse-body { padding-bottom: 8px; }
+.collapse-body > p:last-child { margin-bottom: 18px; }
 
 /* Skim anchors: the three lines that carry the argument on their own. */
 .pullquote {
@@ -412,73 +551,28 @@ body {
 .principles {
   max-width: 720px;
   margin: 0 auto;
-  padding: 0 40px 160px;
+  padding: 0 40px 140px;
 }
 
-.principle {
-  margin-bottom: 56px;
-}
-
-.principle-number {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent);
-  margin-bottom: 12px;
-  font-variant-numeric: tabular-nums;
-}
-
-.principle h3 {
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  margin-bottom: 12px;
-  color: var(--fg);
-}
-
-.principle p {
-  font-size: 15px;
-  font-weight: 300;
-  color: var(--fg-muted);
-  line-height: 1.75;
-}
-
-/* TEAM */
-.team {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 40px 120px;
-}
-
-.team-label {
+.principles-label {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 32px;
-}
-
-.team-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-}
-
-.team-member {
-  padding: 20px 0;
-}
-
-.team-name {
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--fg);
-  margin-bottom: 4px;
-}
-
-.team-role {
-  font-size: 13px;
-  font-weight: 300;
   color: var(--fg-dim);
+  margin-bottom: 12px;
+}
+
+.principles .collapse-body p {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--fg-muted);
+  line-height: 1.75;
+  max-width: 600px;
+}
+
+.principles .collapse:last-of-type {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 /* FOOTER */
@@ -525,11 +619,14 @@ body {
   .nav { padding: 16px 24px; }
   .hero { padding: 100px 24px 60px; }
   .hero-rings { margin-bottom: 40px; }
-  .memo { padding: 80px 24px 120px; }
-  .principles { padding: 0 24px 120px; }
-  .team { padding: 0 24px 80px; }
-  .team-grid { grid-template-columns: 1fr; gap: 8px; }
+  .memo { padding: 80px 24px 100px; }
+  .principles { padding: 0 24px 100px; }
   .footer { padding: 32px 24px; flex-direction: column; gap: 16px; text-align: center; }
+  /* The four labels cannot fit at this width, so the strip scrolls sideways
+     and the active tab is kept in view by the tab script. */
+  .tablist { margin: 0 -24px; padding: 0 24px; }
+  .tab { font-size: 12px; padding: 12px 12px; }
+  .collapse > summary { font-size: 16px; gap: 12px; padding: 18px 0; }
   /* Taller tap targets. Ring spacing bottoms out at a 36px gap, so 8px of
      vertical padding is the most these can take without colliding. */
   .ring-label { font-size: 9px; padding: 8px 12px; }
@@ -542,6 +639,8 @@ body {
   .wave { stroke-opacity: 0; }
   .fade-in { transition: none; opacity: 1; transform: none; }
   .ring-label { animation: none; opacity: 1; }
+  .js-tabs .tabpanel:not([hidden]) { animation: none; }
+  .collapse-icon::before, .collapse-icon::after { transition: none; }
 }
 </style>
 </head>
@@ -595,47 +694,52 @@ body {
 
   <h2 class="fade-in" data-pretext>A company brain is not search. It is a living model of how a company works, built from the people who do the work.</h2>
 
-  <p class="fade-in" data-pretext>Every company brain today is built top-down. Connect Slack, index Drive, point a model at the pile, and hope the retrieval is good enough. Glean is worth $7.2B doing exactly this. Microsoft Copilot ships it to 100 million seats. The category is decided.</p>
-
   <p class="fade-in" data-pretext>Except for one thing. None of them answer the question the company actually needs: <strong>who knows what, why they decided it, and whether that decision still holds.</strong> That requires context no document contains. It lives in people.</p>
+
+  <details class="collapse fade-in" id="the-problem" open>
+    <summary>
+      <span class="summary-text">Why the category looks decided</span>
+      <span class="collapse-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="collapse-body">
+      <p data-pretext>Every company brain today is built top-down. Connect Slack, index Drive, point a model at the pile, and hope the retrieval is good enough. Glean is worth $7.2B doing exactly this. Microsoft Copilot ships it to 100 million seats.</p>
+    </div>
+  </details>
 
   <div class="memo-divider fade-in"></div>
 
   <h2 class="fade-in" data-pretext>The architecture is four rings. Each one earns the next.</h2>
 
-  <div class="memo-rings-inline fade-in">
-    <a class="memo-ring-tag active" href="#digital-twin">Digital Twin</a>
-    <span class="memo-ring-arrow">&rarr;</span>
-    <a class="memo-ring-tag active" href="#personal-brain">Personal Brain</a>
-    <span class="memo-ring-arrow">&rarr;</span>
-    <a class="memo-ring-tag" href="#company-brain">Company Brain</a>
-    <span class="memo-ring-arrow">&rarr;</span>
-    <a class="memo-ring-tag" href="#self-learning">Self-Learning AI</a>
-  </div>
+  <p class="memo-hint fade-in">Pick a ring below, or click one in the diagram at the top.</p>
 
-  <div class="ring-section fade-in" id="digital-twin">
-    <div class="ring-section-index">Ring 01</div>
-    <h3 data-pretext>Digital Twin</h3>
-    <p data-pretext>At the core, a digital twin of each person. Not a chatbot wearing their face. A structured, permission-scoped model of what they know, what they decided, and why.</p>
-  </div>
+  <div class="tabs fade-in" id="rings">
+    <div class="tablist" role="tablist" aria-label="The four rings">
+      <button class="tab" role="tab" id="tab-digital-twin" aria-controls="digital-twin" aria-selected="true"><span class="tab-num">01</span>Digital Twin</button>
+      <button class="tab" role="tab" id="tab-personal-brain" aria-controls="personal-brain" aria-selected="false"><span class="tab-num">02</span>Personal Brain</button>
+      <button class="tab" role="tab" id="tab-company-brain" aria-controls="company-brain" aria-selected="false"><span class="tab-num">03</span>Company Brain</button>
+      <button class="tab" role="tab" id="tab-self-learning" aria-controls="self-learning" aria-selected="false"><span class="tab-num">04</span>Self-Learning AI</button>
+    </div>
 
-  <div class="ring-section fade-in" id="personal-brain">
-    <div class="ring-section-index">Ring 02</div>
-    <h3 data-pretext>Personal Brain</h3>
-    <p data-pretext>The twin sits inside a personal brain, and next to it sits a vault. <strong>1Password for your context.</strong> You hold the keys. You grant scoped, revocable access outward. The company never sees what you did not share.</p>
-    <p data-pretext>It earns its place the moment it starts automating work that needs your context. Not generic AI assistance. Work that only succeeds because the agent knows how <em>you</em> handle things.</p>
-  </div>
+    <div class="tabpanel" id="digital-twin" role="tabpanel" aria-labelledby="tab-digital-twin" tabindex="0">
+      <h3 data-pretext>Digital Twin</h3>
+      <p data-pretext>At the core, a digital twin of each person. Not a chatbot wearing their face. A structured, permission-scoped model of what they know, what they decided, and why.</p>
+    </div>
 
-  <div class="ring-section fade-in" id="company-brain">
-    <div class="ring-section-index">Ring 03</div>
-    <h3 data-pretext>Company Brain</h3>
-    <p data-pretext>The company brain emerges from below. It is what personal brains add up to, each one contributing what its owner chose to share, with the original citation and the original permission boundary intact. No silent drops. No god-mode retrieval.</p>
-  </div>
+    <div class="tabpanel" id="personal-brain" role="tabpanel" aria-labelledby="tab-personal-brain" tabindex="0">
+      <h3 data-pretext>Personal Brain</h3>
+      <p data-pretext>The twin sits inside a personal brain, and next to it sits a vault. <strong>1Password for your context.</strong> You hold the keys. You grant scoped, revocable access outward. The company never sees what you did not share.</p>
+      <p data-pretext>It earns its place the moment it starts automating work that needs your context. Not generic AI assistance. Work that only succeeds because the agent knows how <em>you</em> handle things.</p>
+    </div>
 
-  <div class="ring-section fade-in" id="self-learning">
-    <div class="ring-section-index">Ring 04</div>
-    <h3 data-pretext>Self-Learning AI</h3>
-    <p data-pretext>The outer ring is what this becomes when the system learns from its own operations. Continual learning, reinforcement from real work, and a world model built from real organizational behavior, not training data.</p>
+    <div class="tabpanel" id="company-brain" role="tabpanel" aria-labelledby="tab-company-brain" tabindex="0">
+      <h3 data-pretext>Company Brain</h3>
+      <p data-pretext>The company brain emerges from below. It is what personal brains add up to, each one contributing what its owner chose to share, with the original citation and the original permission boundary intact. No silent drops. No god-mode retrieval.</p>
+    </div>
+
+    <div class="tabpanel" id="self-learning" role="tabpanel" aria-labelledby="tab-self-learning" tabindex="0">
+      <h3 data-pretext>Self-Learning AI</h3>
+      <p data-pretext>The outer ring is what this becomes when the system learns from its own operations. Continual learning, reinforcement from real work, and a world model built from real organizational behavior, not training data.</p>
+    </div>
   </div>
 
   <div class="memo-divider fade-in"></div>
@@ -646,54 +750,64 @@ body {
 
   <blockquote class="pullquote fade-in" data-pretext>The brain belongs to the company. The twin belongs to the person.</blockquote>
 
-  <p class="fade-in" data-pretext>Revocation, portability on exit, an audit log the individual owns. Nobody has shipped this as a product primitive. The incumbents cannot, because their entire business model assumes org-level consent granted once by IT. The individual's side of the permission boundary is unclaimed territory.</p>
-
-  <p class="fade-in" data-pretext>We build the brain. We ship the twin as a view of it. And we enter through consent, the one capability a seat-priced, org-indexed incumbent structurally cannot copy.</p>
+  <details class="collapse fade-in" id="why-incumbents-cannot" open>
+    <summary>
+      <span class="summary-text">Why the incumbents cannot follow</span>
+      <span class="collapse-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="collapse-body">
+      <p data-pretext>Revocation, portability on exit, an audit log the individual owns. Nobody has shipped this as a product primitive. The incumbents cannot, because their entire business model assumes org-level consent granted once by IT. The individual's side of the permission boundary is unclaimed territory.</p>
+      <p data-pretext>We build the brain. We ship the twin as a view of it. And we enter through consent, the one capability a seat-priced, org-indexed incumbent structurally cannot copy.</p>
+    </div>
+  </details>
 </section>
 
-<section class="principles">
-  <div class="principle fade-in">
-    <div class="principle-number">01</div>
-    <h3 data-pretext>Permissions are not a feature. They are the product.</h3>
-    <p data-pretext>Every answer carries a citation. Every retrieval respects two independent authorities: the org ACL and the individual's grant. Where they conflict, the person wins. One cross-boundary leak ends the company. This is non-negotiable engineering, tested in CI on every build.</p>
-  </div>
-  <div class="principle fade-in">
-    <div class="principle-number">02</div>
-    <h3 data-pretext>Decisions, not documents.</h3>
-    <p data-pretext>Search tools answer "where is the refund policy?" A company brain answers "how do we handle a refund for an enterprise customer past 30 days, who decided that, and is it still true?" Then lets an agent act on the answer. The moat is the "why" layer that no incumbent leads with.</p>
-  </div>
-  <div class="principle fade-in">
-    <div class="principle-number">03</div>
-    <h3 data-pretext>Sit above the tools, not beside them.</h3>
-    <p data-pretext>Model-agnostic. Feeds context into Copilot, ChatGPT, Claude, your own agents over MCP. Replaces nothing the company already pays for. Lowers the rip-and-replace objection to near zero.</p>
-  </div>
-  <div class="principle fade-in">
-    <div class="principle-number">04</div>
-    <h3 data-pretext>Start narrow. Stay narrow until it works.</h3>
-    <p data-pretext>One wedge. One design partner. One use case where "how + why + execute" is obviously valuable and measurable. Land one mid-market company bottom-up, prove ramp-time and agent-task-success, then widen. Enter on the wedge, not the category.</p>
-  </div>
-</section>
+<section class="principles" id="principles">
+  <div class="principles-label fade-in">Principles</div>
 
-<section class="team">
-  <div class="team-label fade-in">Team AJV</div>
-  <div class="team-grid fade-in">
-    <div class="team-member">
-      <div class="team-name">Vivek</div>
-      <div class="team-role">GTM, discovery, design partners</div>
+  <details class="collapse fade-in">
+    <summary>
+      <span class="collapse-num">01</span>
+      <span class="summary-text">Permissions are not a feature. They are the product.</span>
+      <span class="collapse-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="collapse-body">
+      <p data-pretext>Every answer carries a citation. Every retrieval respects two independent authorities: the org ACL and the individual's grant. Where they conflict, the person wins. One cross-boundary leak ends the company. This is non-negotiable engineering, tested in CI on every build.</p>
     </div>
-    <div class="team-member">
-      <div class="team-name">Amritesh</div>
-      <div class="team-role">Full-stack, product, glue</div>
+  </details>
+
+  <details class="collapse fade-in">
+    <summary>
+      <span class="collapse-num">02</span>
+      <span class="summary-text">Decisions, not documents.</span>
+      <span class="collapse-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="collapse-body">
+      <p data-pretext>Search tools answer "where is the refund policy?" A company brain answers "how do we handle a refund for an enterprise customer past 30 days, who decided that, and is it still true?" Then lets an agent act on the answer. The moat is the "why" layer that no incumbent leads with.</p>
     </div>
-    <div class="team-member">
-      <div class="team-name">Vikram</div>
-      <div class="team-role">Backend, data, permissions</div>
+  </details>
+
+  <details class="collapse fade-in">
+    <summary>
+      <span class="collapse-num">03</span>
+      <span class="summary-text">Sit above the tools, not beside them.</span>
+      <span class="collapse-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="collapse-body">
+      <p data-pretext>Model-agnostic. Feeds context into Copilot, ChatGPT, Claude, your own agents over MCP. Replaces nothing the company already pays for. Lowers the rip-and-replace objection to near zero.</p>
     </div>
-    <div class="team-member">
-      <div class="team-name">Jai</div>
-      <div class="team-role">AI, graph, retrieval, MCP</div>
+  </details>
+
+  <details class="collapse fade-in">
+    <summary>
+      <span class="collapse-num">04</span>
+      <span class="summary-text">Start narrow. Stay narrow until it works.</span>
+      <span class="collapse-icon" aria-hidden="true"></span>
+    </summary>
+    <div class="collapse-body">
+      <p data-pretext>One wedge. One design partner. One use case where "how + why + execute" is obviously valuable and measurable. Land one mid-market company bottom-up, prove ramp-time and agent-task-success, then widen. Enter on the wedge, not the category.</p>
     </div>
-  </div>
+  </details>
 </section>
 
 <footer class="footer">
@@ -735,13 +849,84 @@ ringLabels.forEach(label => {
   label.addEventListener('blur', off);
 });
 
+// TABS. The panels are visible in the markup so the page reads as a normal
+// document without JS; collapsing to one panel is the enhancement.
+const tablist = document.querySelector('.tablist');
+const tabs = tablist ? [...tablist.querySelectorAll('[role="tab"]')] : [];
+const panels = tabs.map(t => document.getElementById(t.getAttribute('aria-controls')));
+
+function activateTab(tab, { focusTab = false } = {}) {
+  tabs.forEach((t, i) => {
+    const selected = t === tab;
+    t.setAttribute('aria-selected', String(selected));
+    t.tabIndex = selected ? 0 : -1;
+    if (panels[i]) panels[i].hidden = !selected;
+  });
+  if (focusTab) tab.focus();
+
+  // Keep the active tab visible when the strip is scrolled horizontally.
+  // Done by hand rather than scrollIntoView so the page cannot scroll vertically.
+  const tabBox = tab.getBoundingClientRect();
+  const listBox = tablist.getBoundingClientRect();
+  if (tabBox.left < listBox.left) {
+    tablist.scrollLeft -= listBox.left - tabBox.left + 16;
+  } else if (tabBox.right > listBox.right) {
+    tablist.scrollLeft += tabBox.right - listBox.right + 16;
+  }
+}
+
+// Returns true when the id belongs to a tab panel, so callers know to scroll
+// to the tab strip rather than to the panel itself.
+function activateTabFor(id) {
+  const tab = tabs.find(t => t.getAttribute('aria-controls') === id);
+  if (!tab) return false;
+  activateTab(tab);
+  return true;
+}
+
+if (tabs.length) {
+  document.documentElement.classList.add('js-tabs');
+  activateTab(tabs[0]);
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      activateTab(tab);
+      history.replaceState(null, '', '#' + tab.getAttribute('aria-controls'));
+    });
+  });
+
+  tablist.addEventListener('keydown', event => {
+    const current = tabs.indexOf(document.activeElement);
+    if (current < 0) return;
+    const last = tabs.length - 1;
+    let next = null;
+    if (event.key === 'ArrowRight') next = tabs[current === last ? 0 : current + 1];
+    else if (event.key === 'ArrowLeft') next = tabs[current === 0 ? last : current - 1];
+    else if (event.key === 'Home') next = tabs[0];
+    else if (event.key === 'End') next = tabs[last];
+    if (!next) return;
+    event.preventDefault();
+    activateTab(next, { focusTab: true });
+    history.replaceState(null, '', '#' + next.getAttribute('aria-controls'));
+  });
+}
+
 // A deep link lands mid-page, where the fade-in observer may not have fired yet.
 // Reveal the target and its neighbours up front so the section is never blank.
 function revealHashTarget(scrollToIt) {
   const id = location.hash.slice(1);
   if (!id) return;
-  const target = document.getElementById(id);
+  let target = document.getElementById(id);
   if (!target) return;
+
+  // A ring id points at a tab panel. Open its tab and aim at the strip, so the
+  // reader sees which ring is selected rather than landing on bare prose.
+  if (activateTabFor(id)) target = document.getElementById('rings') || target;
+
+  // A target inside a minimized block is useless while the block is shut.
+  const parentDetails = target.closest('details');
+  if (parentDetails) parentDetails.open = true;
+
   target.classList.add('visible');
   let prev = target.previousElementSibling;
   for (let i = 0; i < 2 && prev; i++, prev = prev.previousElementSibling) {
@@ -799,12 +984,20 @@ function scrollToSection(target) {
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', event => {
     const id = link.getAttribute('href').slice(1);
-    const target = document.getElementById(id);
+    let target = document.getElementById(id);
     if (!target) return;
     event.preventDefault();
+
+    // Clicking a ring in the diagram selects that ring's tab, then scrolls to
+    // the strip so the selection is visible along with the text it revealed.
+    if (activateTabFor(id)) target = document.getElementById('rings') || target;
+
+    const parentDetails = target.closest('details');
+    if (parentDetails) parentDetails.open = true;
+
     target.classList.add('visible');
     scrollToSection(target);
-    history.pushState(null, '', '#' + id);
+    history.replaceState(null, '', '#' + id);
   });
 });
 </script>
