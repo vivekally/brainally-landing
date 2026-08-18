@@ -25,7 +25,10 @@
   --font: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-html { scroll-behavior: smooth; }
+/* Deliberately NOT scroll-behavior: smooth on html. A global smooth rule
+   fights the browser's fragment navigation on load and leaves deep links
+   stranded at the top. Clicks animate via JS instead; load-time jumps stay
+   instant and native. */
 
 body {
   background: var(--bg);
@@ -763,6 +766,21 @@ function revealHashTarget(scrollToIt) {
 
 revealHashTarget(true);
 window.addEventListener('hashchange', () => revealHashTarget(false));
+
+// Smooth scrolling belongs on clicks, not on the document. Doing it here keeps
+// the animation for in-page navigation while leaving load-time fragment jumps
+// instant, which is what someone arriving on a deep link actually wants.
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', event => {
+    const id = link.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    event.preventDefault();
+    target.classList.add('visible');
+    target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    history.pushState(null, '', '#' + id);
+  });
+});
 </script>
 
 <!-- Progressive enhancement only. If this never loads, the page is unaffected. -->
