@@ -4,6 +4,8 @@ Landing page for BrainAlly, the consent-first company brain.
 
 **Live:** https://vivekally.github.io/brainally-landing/
 
+**Market thesis:** https://vivekally.github.io/brainally-thesis/ ([repo](https://github.com/vivekally/brainally-thesis))
+
 ## What it says
 
 A company brain is not search. It is a living model of how a company works,
